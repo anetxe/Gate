@@ -159,22 +159,51 @@ void GateToASCII::RecordEndOfRun(const G4Run * )
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
-void GateToASCII::RecordBeginOfEvent(const G4Event* )
+void GateToASCII::RecordBeginOfEvent(const G4Event* evt )
 {
-  if (nVerboseLevel > 2)
+  //if (nVerboseLevel > 2)
     G4cout << "GateToASCII::RecordBeginOfEvent\n";
+
+
+    std::cout<<"eventID="<<evt->GetEventID()<<std::endl;
+    
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
 
 void GateToASCII::RecordEndOfEvent(const G4Event* event)
 {
-  if (nVerboseLevel > 2)
-    G4cout << "GateToASCII::RecordEndOfEvent\n";
+  if (nVerboseLevel > 2) G4cout << "GateToASCII::RecordEndOfEvent\n";
 
+  std::cout<<"GateToASCII::RecordEndOfEvent:eventID="<<event->GetEventID()<<std::endl;
   if (m_outFileHitsFlag) {
 
     GateCrystalHitsCollection* CHC = GetOutputMgr()->GetCrystalHitCollection();
+    GatePhantomHitsCollection* PHC = GetOutputMgr()->GetPhantomHitCollection();
+    G4int nCPhantom=0;
+    G4int nRPhantom=0;
+    G4String NameVolR="";
+    G4String NameVolC="";
+    //strcpy (NameVolC, "");
+     if (PHC) {
+
+   	 G4int NpHits = PHC->entries();
+    	for (G4int iPHit=0;iPHit<NpHits;iPHit++)
+        {
+        GatePhantomHit* pHit = (*PHC)[iPHit];
+	 //G4cout << "GAteRoASCII:RecordEndOfEvent PhantomSD : edep = " << pHit->GetEdep() << Gateendl;
+	G4cout << "GAteRoASCII:RecordEndOfEvent  PhantomSD :VolumeName="<<pHit->GetPhysVolName() << Gateendl;
+	G4cout << "GAteRoASCII:RecordEndOfEvent PhantomSD :ProcessNamePosStepProcess="<<pHit->GetProcess()<< Gateendl;
+	if(pHit->GetProcess()=="compt"){
+           nCPhantom++;
+	   NameVolC=pHit->GetPhysVolName();
+        }
+	else if(pHit->GetProcess()=="Rayl"){
+	   nRPhantom++;
+   	   NameVolR=pHit->GetPhysVolName();
+        }
+        }
+     }
 
     G4int NbHits = 0;
 
@@ -186,8 +215,29 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
       for (G4int iHit=0;iHit<NbHits;iHit++) {
 	G4String processName = (*CHC)[iHit]->GetProcess();
 	G4int PDGEncoding  = (*CHC)[iHit]->GetPDGEncoding();
-	if (nVerboseLevel > 2) G4cout
-	  << "GateToASCII::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
+	//(*CHC)[iHit]->SetNPhantomRayleigh(nRPhantom);
+	//(*CHC)[iHit]->SetNPhantomCompton(nCPhantom);
+	//(*CHC)[iHit]->SetRayleighVolumeName(NameVolC);
+	//(*CHC)[iHit]->SetComptonVolumeName(NameVolR);
+	if((*CHC)[iHit]->GetEventID()==9928||(*CHC)[iHit]->GetEventID()==18372||(*CHC)[iHit]->GetEventID()==10743){
+		G4cout << "######################################################################################################################## " <<Gateendl;
+		G4cout << "GAteRoASCII:RecordEndOfEvent : eventID = " << (*CHC)[iHit]->GetEventID() << Gateendl;
+        	G4cout << "GAteRoASCII:RecordEndOfEvent  : edep = " << (*CHC)[iHit]->GetEdep() << Gateendl;
+	 	G4cout << "GAteRoASCII:RecordEndOfEvent  : NPhantomCompton = " << (*CHC)[iHit]->GetNPhantomCompton() << Gateendl;
+        	G4cout << "GAteRoASCII:RecordEndOfEvent  :  NCrystalCompton= "<<(*CHC)[iHit]->GetNCrystalCompton() << Gateendl;
+        	G4cout << "GAteRoASCII:RecordEndOfEvent  : NPhantomRayleigh= "<< (*CHC)[iHit]->GetNPhantomRayleigh()<< Gateendl;
+        	G4cout << "GAteRoASCII:RecordEndOfEvent  : NCrystalRayleigh= "<<(*CHC)[iHit]->GetNCrystalRayleigh() << Gateendl;
+        	G4cout << "GAteRoASCII:RecordEndOfEvent : NComptonVolumeNa="<<(*CHC)[iHit]->GetComptonVolumeName() << Gateendl;
+		G4cout << "GAteRoASCII:RecordEndOfEvent  : RayleighVolumeName="<<(*CHC)[iHit]->GetRayleighVolumeName() << Gateendl;
+		G4cout << "GAteRoASCII:RecordEndOfEvent  : PostStepProcess="<<(*CHC)[iHit]->GetPostStepProcess()<< Gateendl;
+		G4cout << "GAteRoASCII:RecordEndOfEvent  : Process="<<(*CHC)[iHit]->GetProcess()<<"  processNamePostStep"<<processName<<Gateendl;
+		G4cout << "C######################################################################################################################## " <<Gateendl;
+ 	}
+
+
+
+	if (nVerboseLevel > 2)
+	  G4cout<< "GateToASCII::RecordEndOfEvent : CrystalHitsCollection: processName : <" << processName
 	  << ">    Particls PDG code : " << PDGEncoding << Gateendl;
 	if ((*CHC)[iHit]->GoodForAnalysis()) {
 	  if (m_outFileHitsFlag) m_outFileHits << (*CHC)[iHit];
@@ -200,7 +250,7 @@ void GateToASCII::RecordEndOfEvent(const G4Event* event)
     }
   }
 
-
+ G4cout << "GateToASCII::RecordEndOfEvent\n";
   RecordDigitizer(event);
 
 }

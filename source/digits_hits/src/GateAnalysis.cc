@@ -446,6 +446,9 @@ void GateAnalysis::RecordEndOfEvent(const G4Event* event)
 
                   (*CHC)[iHit]->SetSourceID          (sourceID);
                   (*CHC)[iHit]->SetSourcePosition    (sourceVertex);
+		  //AEB test
+		  (*CHC)[iHit]->SetSourceEnergy(  event->GetPrimaryVertex()->GetPrimary()->GetKineticEnergy());
+		  //
                   (*CHC)[iHit]->SetNPhantomCompton   (nPhantomCompton);
                   (*CHC)[iHit]->SetNPhantomRayleigh   (nPhantomRayleigh);
                   (*CHC)[iHit]->SetComptonVolumeName (theComptonVolumeName);
