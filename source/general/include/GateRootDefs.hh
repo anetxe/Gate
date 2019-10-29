@@ -144,6 +144,12 @@ class GateRootHitBuffer
 	sourcePosZ = aPosition.z() / mm; 
       }
 
+  //AEB
+  inline G4double GetSourceEnergy() const
+  { return sourceEnergy* MeV;}
+  inline void SetSourceEnergy(G4double sEnergy)
+  { sourceEnergy = sEnergy / MeV;}
+
     //! Returns the scanner axial position in G4 units (conversion from millimeters)
     inline G4double GetAxialPos() const
       { return axialPos * mm;}
@@ -181,6 +187,8 @@ class GateRootHitBuffer
     Int_t    nCrystalRayleigh; 	      	      	//!< Number of Rayleigh interactions in the crystam
     Int_t    primaryID;       	      	      	//!< Primary ID
     Float_t  sourcePosX,sourcePosY,sourcePosZ;	//!< Global decay position (in millimeters)
+    //AEB    
+    Float_t sourceEnergy;
     Int_t    sourceID;	      	      	      	//!< Source ID
     Int_t    eventID; 	      	      	      	//!< Event ID
     Int_t    runID;   	      	      	      	//!< Run ID
@@ -245,6 +253,7 @@ class GateRootSingleBuffer
     Float_t  sourcePosX;
     Float_t  sourcePosY;
     Float_t  sourcePosZ;
+    Float_t  sourceEnergy;
     Double_t time;
     Float_t  energy;
     Float_t  globalPosX;

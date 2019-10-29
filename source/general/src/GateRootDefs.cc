@@ -106,6 +106,7 @@ void GateRootHitBuffer::Clear()
   sourcePosX      = 0./mm;
   sourcePosY      = 0./mm;
   sourcePosZ      = 0./mm;
+  sourceEnergy      = 0./MeV;
   sourceID        = -1;
   eventID         = -1;
   runID           = -1;
@@ -151,6 +152,7 @@ void GateRootHitBuffer::Fill(GateCrystalHit* aHit)
   nCrystalRayleigh = aHit->GetNCrystalRayleigh();
   primaryID       = aHit->GetPrimaryID();
   SetSourcePos(     aHit->GetSourcePosition() );
+  SetSourceEnergy(aHit->GetSourceEnergy());
   sourceID        = aHit->GetSourceID();
   eventID         = aHit->GetEventID();
   runID           = aHit->GetRunID();
@@ -214,6 +216,7 @@ GateCrystalHit* GateRootHitBuffer::CreateHit()
   aHit->SetParentID(        	parentID );
   aHit->SetSourceID(        	sourceID );
   aHit->SetSourcePosition(  	GetSourcePos() );
+  aHit->SetSourceEnergy(GetSourceEnergy());
   aHit->SetPhotonID(        	photonID );
   aHit->SetNPhantomCompton( 	nPhantomCompton );
   aHit->SetNCrystalCompton( 	nCrystalCompton );
@@ -264,6 +267,7 @@ void GateHitTree::Init(GateRootHitBuffer& buffer)
   Branch("sourcePosX",     &buffer.sourcePosX,"sourcePosX/F");
   Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
   Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
+  Branch("sourceEnergy",    &buffer.sourceEnergy,"sourceEnergy/F");
   Branch("sourceID",       &buffer.sourceID,"sourceID/I");
   Branch("eventID",        &buffer.eventID,"eventID/I");
   Branch("runID",          &buffer.runID,"runID/I");
@@ -306,6 +310,7 @@ void GateHitTree::SetBranchAddresses(TTree* hitTree,GateRootHitBuffer& buffer)
   hitTree->SetBranchAddress("sourcePosX",&buffer.sourcePosX);
   hitTree->SetBranchAddress("sourcePosY",&buffer.sourcePosY);
   hitTree->SetBranchAddress("sourcePosZ",&buffer.sourcePosZ);
+  hitTree->SetBranchAddress("sourceEnergy",&buffer.sourceEnergy);
   hitTree->SetBranchAddress("sourceID",&buffer.sourceID);
   hitTree->SetBranchAddress("eventID",&buffer.eventID);
   hitTree->SetBranchAddress("runID",&buffer.runID);
@@ -328,6 +333,7 @@ void GateRootSingleBuffer::Clear()
   sourcePosX       = 0./mm;
   sourcePosY       = 0./mm;
   sourcePosZ       = 0./mm;
+  sourceEnergy      = 0./MeV;
   time             = 0./s;
   energy           = 0./MeV;
   globalPosX       = 0./mm;
@@ -359,6 +365,7 @@ void GateRootSingleBuffer::Fill(GateSingleDigi* aDigi)
   sourcePosX    = (aDigi->GetSourcePosition()).x()/mm;
   sourcePosY    = (aDigi->GetSourcePosition()).y()/mm;
   sourcePosZ    = (aDigi->GetSourcePosition()).z()/mm;
+  sourceEnergy    =aDigi->GetSourceEnergy()/MeV;
   time          =  aDigi->GetTime()/s;
   energy        =  aDigi->GetEnergy()/MeV;
   globalPosX    = (aDigi->GetGlobalPos()).x()/mm;
@@ -395,6 +402,7 @@ void GateSingleTree::Init(GateRootSingleBuffer& buffer)
     Branch("sourcePosY",     &buffer.sourcePosY,"sourcePosY/F");
   if ( GateSingleDigi::GetSingleASCIIMask(5) )
     Branch("sourcePosZ",     &buffer.sourcePosZ,"sourcePosZ/F");
+  Branch("sourceEnergy",     &buffer.sourceEnergy,"sourceEnergy/F");
   if ( GateSingleDigi::GetSingleASCIIMask(7) )
     Branch("time",           &buffer.time,"time/D");
   if ( GateSingleDigi::GetSingleASCIIMask(8) )
